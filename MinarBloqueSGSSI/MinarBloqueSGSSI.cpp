@@ -2,13 +2,11 @@
 #include <iomanip>
 #include <sstream>
 #include <fstream>
-#include <string>
 
 #include <openssl/sha.h>
 #include <openssl/evp.h>
-#include <format>
 
-template< typename T >
+template <typename T>
 std::string int_to_hex(T i)
 {
     std::stringstream stream;
@@ -35,19 +33,20 @@ std::string sha256(const std::string str)
 
 int main() 
 {	
-    std::uint32_t current = 67602058;
+    std::uint32_t current = 0;
     std::string currentHex = int_to_hex(current);
     std::string bestDigest = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
     std::string bestHex = "0";
 
-    std::ifstream t("SGSSI-22.CB.04.txt");
+    std::ifstream t("SGSSI-22.CB.07.txt");
     std::stringstream buffer;
     buffer << t.rdbuf();
     std::string content = buffer.str();
-    //4294967296
-    while (current < 268435456) //current == 268435456 change to uintptr_t and ++ to increase value instead of int_to_hex call
+    std::string newDigest;
+    //4294967296 = numero total de posibilidades, 00000000 a ffffffff
+    while (current < 4294967296)
     {
-        std::string newDigest = sha256(content + currentHex + " " + "G04");
+        newDigest = sha256(content + currentHex + " " + "G31d");
         if (newDigest.compare(bestDigest) < 0)
         {
 			bestDigest = newDigest;
@@ -58,13 +57,13 @@ int main()
     }
 	
     std::string line;
-    std::ifstream ini_file{ "SGSSI-22.CB.04.txt" };
-    std::ofstream out_file{ "SGSSI-22.CB.04.txt", std::ios_base::binary | std::ios_base::out };
+    std::ifstream ini_file{ "SGSSI-22.CB.07.txt" };
+    std::ofstream out_file{ "SGSSI-22.CB.07.31d.txt", std::ios_base::binary | std::ios_base::out };
     if (ini_file && out_file)
     {
         while (getline(ini_file, line))
             out_file << line << "\n";
-        out_file << bestHex << " " << "G04";
+        out_file << bestHex << " " << "G31d";
     }
     ini_file.close();
     out_file.close();
